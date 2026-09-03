@@ -1,20 +1,25 @@
 # World Cup 2026 forecast
 
-What would happen if the 2026 World Cup were played ten thousand times? This project tries to
-answer that. It rates every national team from 49,555 historical matches, predicts each of the
-real group-stage fixtures, and then simulates the full 48-team tournament ten thousand times to
-produce title odds with error bars. A read-only Streamlit dashboard renders the results across
-five pages: per-match predictions, team profiles, tournament odds, the model's own track
-record, and a predicted knockout bracket.
+What would happen if the 2026 World Cup were played ten thousand times? This project set out to
+answer that before a ball was kicked. It rates every national team from 49,555 historical
+matches, predicts each of the real group-stage fixtures, and then simulates the full 48-team
+tournament ten thousand times to produce title odds with error bars. A read-only Streamlit
+dashboard renders the results across five pages: per-match predictions, team profiles,
+tournament odds, the model's own track record, and a predicted knockout bracket.
 
-As of 11 June 2026 the model's favorite is Spain at about 25%, with Argentina and France behind.
-The forecast refreshes after each played match.
+Everything below was produced on 11 June 2026, the day the tournament began, and has not been
+edited since. That is the point. A forecast only means something if it was written down first,
+so this one stays as it was published, warts included. The model's favorite was Spain at about
+25%, ahead of Argentina and France.
+
+The tournament has since finished. I have not yet scored these predictions against what actually
+happened, so read this as a forecast on the record rather than a verdict on how good it was.
 
 ## What it predicts
 
-These are the current title odds from a 10,000-run simulation. The intervals are the
-Monte-Carlo sampling error: precise to a few tenths of a point at the top, wider in relative
-terms for the longshots.
+These were the title odds on the morning of the opening match, from a 10,000-run simulation. The
+intervals are the Monte-Carlo sampling error: precise to a few tenths of a point at the top, and
+wider in relative terms for the longshots.
 
 | Team | P(win) | 95% interval |
 |------|-------:|:------------:|
@@ -29,8 +34,9 @@ terms for the longshots.
 | Belgium | 2.9% | 2.6 to 3.2% |
 | Croatia | 1.7% | 1.5 to 2.0% |
 
-These numbers move as results come in. The full table and the per-round reach probabilities
-live on the Tournament page.
+The full table and the per-round reach probabilities live on the Tournament page. The pipeline
+can fold in each new result and rerun the simulation from one command, which is the part that
+never got used once the tournament was actually underway.
 
 ## The dashboard
 
@@ -101,7 +107,7 @@ odds look nice.
 | Table | Rows | Where it comes from |
 |-------|-----:|---------------------|
 | Historical matches | 49,555 | Kaggle (martj42) plus StatsBomb open data |
-| Team Elo ratings | 98,794 | computed from results, 363 teams, current to June 2026 |
+| Team Elo ratings | 98,794 | computed from results, 363 teams, up to June 2026 |
 | Player stats | 597,165 | FBref, ~20K players across 630 clubs and 30+ leagues |
 | Player event values | 21,618 | StatsBomb events from 262 internationals |
 | Team style profiles | 885 | action-type shares for 59 national teams |
@@ -144,8 +150,8 @@ Read these before trusting any number.
   on team strength rather than format-specific priors.
 - Club performance does not transfer cleanly to international play, so that signal is
   down-weighted, and any feature that could leak the result is used only in its pre-match form.
-- In-tournament updates are coarse: Elo, lineups, and summary stats, not event-level. After each
-  result the goal model and the simulation rerun while the CatBoost model is reused.
+- In-tournament updates are coarse by design: Elo, lineups, and summary stats, not event-level.
+  A run recomputes the goal model and the simulation, and reuses the CatBoost model.
 
 The full writeup is in [`reports/methodology.md`](reports/methodology.md), and the
 reasoning behind every parameter is in [`docs/design.md`](docs/design.md).
@@ -183,7 +189,8 @@ python scripts/pipeline/run_simulation.py        # refit and run the 10k Monte-C
 python scripts/pipeline/build_dashboard_data.py  # per-fixture predictions, about 2 to 3 min
 ```
 
-During the tournament, one command fetches new results and reruns the whole update cycle:
+One command fetches new results and reruns the whole update cycle. This is the piece that was
+built for the tournament and never actually used during it:
 
 ```bash
 APIFOOTBALL_KEY=... python scripts/pipeline/run_live_cycle.py    # fetch plus full update, 4 to 5 min
