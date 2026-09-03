@@ -49,3 +49,12 @@ CANON_PREDICTION_COLS = [
     "match_id", "date", "home_team", "away_team", "snapshot_date",
     "p_home", "p_draw", "p_away", "exp_goals_home", "exp_goals_away", "source",
 ]
+
+# Actual 2026 results, kept in their own table rather than appended to matches so that
+# refitting the model can never train on the tournament it is meant to be predicting.
+# `stage` is the group letter for group games, else the knockout round name.
+# `decided_by` is one of regulation, aet, penalties.
+CANON_RESULT_COLS = [
+    "match_id", "date", "stage", "home_team", "away_team",
+    "home_score", "away_score", "decided_by", "source",
+]

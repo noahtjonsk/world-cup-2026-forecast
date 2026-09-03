@@ -4,16 +4,18 @@ What would happen if the 2026 World Cup were played ten thousand times? This pro
 answer that before a ball was kicked. It rates every national team from 49,555 historical
 matches, predicts each of the real group-stage fixtures, and then simulates the full 48-team
 tournament ten thousand times to produce title odds with error bars. A read-only Streamlit
-dashboard renders the results across five pages: per-match predictions, team profiles,
-tournament odds, the model's own track record, and a predicted knockout bracket.
+dashboard renders the results across six pages: per-match predictions, team profiles,
+tournament odds, the model's own track record, a predicted knockout bracket, and a scorecard
+of how the forecast actually did.
 
 Everything below was produced on 11 June 2026, the day the tournament began, and has not been
 edited since. That is the point. A forecast only means something if it was written down first,
 so this one stays as it was published, warts included. The model's favorite was Spain at about
 25%, ahead of Argentina and France.
 
-The tournament has since finished. I have not yet scored these predictions against what actually
-happened, so read this as a forecast on the record rather than a verdict on how good it was.
+The tournament has since finished, and the forecast has been scored against all 104 results.
+It beat a no-knowledge baseline by a clear but modest margin, and its round-by-round
+probabilities came out well calibrated. It was also wrong in specific, interesting ways.
 
 ## What it predicts
 
@@ -34,13 +36,47 @@ wider in relative terms for the longshots.
 | Belgium | 2.9% | 2.6 to 3.2% |
 | Croatia | 1.7% | 1.5 to 2.0% |
 
-The full table and the per-round reach probabilities live on the Tournament page. The pipeline
-can fold in each new result and rerun the simulation from one command, which is the part that
-never got used once the tournament was actually underway.
+The full table and the per-round reach probabilities live on the Tournament page.
+
+## How it did
+
+Scoring those 72 group-stage predictions against what actually happened:
+
+| Predictor | Log-loss | RPS | Brier |
+|-----------|---------:|----:|------:|
+| The published forecast | 0.901 | 0.164 | 0.533 |
+| Uniform, one third each | 1.099 | 0.231 | 0.667 |
+| Always the home side | 1.631 | 0.330 | 0.912 |
+
+Lower is better. The two reference rows are there for scale, because a log-loss of 0.9 means
+nothing on its own.
+
+The forecast beat the uniform predictor by 0.198 in log-loss per match, with a bootstrap 95%
+interval of 0.070 to 0.321. That clears zero, so the edge is real on this tournament rather
+than a lucky sample. It is also modest, and 72 matches is a modest sample, so that is as
+strong as the claim gets.
+
+The tournament-level probabilities held up better than the match-level ones. Across 240
+team-and-round predictions, teams given 25 to 50% of reaching a round got there 42% of the
+time, teams given 50 to 75% got there 75% of the time, and teams given more than 75% got
+there 92% of the time. That is what calibration is supposed to look like.
+
+Two things it got wrong. It expected about half a goal per match fewer than were scored, and
+it under-predicted draws, 23.7% against the 27.8% that happened. Those two do not obviously
+share a cause, and one tournament cannot settle it.
+
+Spain won, and Spain was the model's favorite at 25.3%. Argentina, its second pick, were
+runners-up. That is one observation and it is worth very little on its own: something given
+25% happens about a quarter of the time, so a single correct call is not evidence of skill.
+The 72 match predictions above are.
+
+The full accounting, including every match ordered by how badly the model missed it, is in
+[`reports/forecast_scorecard.md`](reports/forecast_scorecard.md) and on the Scorecard page of
+the dashboard.
 
 ## The dashboard
 
-The dashboard is read-only over the persisted tables. It has five pages.
+The dashboard is read-only over the persisted tables. It has six pages.
 
 The Tournament page ranks every team by title odds and shows how far each is expected to get.
 
@@ -187,6 +223,17 @@ are reproducible. To regenerate them:
 python scripts/ingest/regenerate_fixtures.py     # rebuild fixtures and groups from the schedule
 python scripts/pipeline/run_simulation.py        # refit and run the 10k Monte-Carlo, about 3 min
 python scripts/pipeline/build_dashboard_data.py  # per-fixture predictions, about 2 to 3 min
+```
+
+Careful with those last two. They regenerate the forecast, and the forecast in this repo is
+only worth anything because it was made before the tournament. Rerunning them now would
+overwrite a genuine out-of-sample prediction with a hindsight one.
+
+The scorecard is built separately and reads only:
+
+```bash
+python scripts/ingest/fetch_2026_results.py      # scrape the 104 real results from Wikipedia
+python scripts/pipeline/score_forecast.py        # score the frozen forecast against them
 ```
 
 One command fetches new results and reruns the whole update cycle. This is the piece that was

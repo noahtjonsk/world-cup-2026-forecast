@@ -90,7 +90,7 @@ anchor would partly undo the adjustment the bump had just made.
 
 **By held-out ranked probability score, never by how the title odds look.** That rule
 matters more than any individual number in the table below. It is very easy to tune a
-football model until the favourites look right and to mistake that for accuracy.
+football model until the favorites look right and to mistake that for accuracy.
 
 Every backtest is walk-forward: each split trains only on matches that precede the ones
 it scores, so no fit ever sees its own test set. Test rows whose team never appears in
@@ -107,7 +107,7 @@ with the reason.
 | `half_life_days` | 730 | A two-year recency half-life on match weights |
 | `elo_anchor_weight` | 0.7 | Judgment, see below |
 | `squad_coef` | 0.25 | Judgment, see below |
-| `sim_runs` | 10,000 | Enough that the interval on the favourite is a few tenths of a point |
+| `sim_runs` | 10,000 | Enough that the interval on the favorite is a few tenths of a point |
 | `sim_jitter` | 0.15 | Per-run perturbation of team strength, so fit uncertainty reaches the odds |
 
 ### Why `elo_anchor_weight` is 0.7 and not 1.0
@@ -188,6 +188,40 @@ test pins the host names.
 
 Any odds report produced before that fix used the bad draw.
 
+## Scoring the forecast
+
+The 2026 forecast was published on 11 June and scored afterwards against all 104 results.
+Two rules keep that honest.
+
+**The published prediction is immutable.** `match_predictions.parquet`,
+`simulation_results.parquet`, `bracket_results.parquet` and `reports/simulation.md` are
+never regenerated. Their only value is that they predate the tournament, and rerunning
+`run_simulation.py` today would silently replace an out-of-sample forecast with a hindsight
+one. The scripts that would do it carry a warning in the README.
+
+**The results live in their own table.** `results_2026.parquet` is separate from
+`matches.parquet` precisely so that a future refit cannot train on the tournament it is
+supposed to be predicting.
+
+`scripts/ingest/fetch_2026_results.py` builds the results table from Wikipedia, and the
+parsing lives in `src/ingest/wikipedia_results.py` where it can be unit-tested. The
+validation is deliberately heavy, because a bracket diagram is easy to misread: it checks
+counts per group and per round, requires every team name to resolve, and then recomputes
+each group table from the parsed results and compares it against the standings table
+published separately on the same page. That last check is what makes a misread scoreline
+impossible to miss.
+
+`src/evaluation/scorecard.py` does the scoring, reusing the same metrics as the historical
+backtests. It scores only what was actually published: the Elo-baseline win/draw/loss
+probabilities and the Dixon-Coles expected goals, over the 72 group matches. CatBoost is not
+scored, because no CatBoost model was ever published for these fixtures. The knockouts feed
+the round-reaching comparison rather than the match metrics, since no probabilities were
+published for them and extra time would make the label ambiguous.
+
+Two reference predictors, uniform and always-home, are scored alongside, because a log-loss
+figure means nothing without something to compare it to. A bootstrap interval on the
+advantage over uniform says whether the edge survives the sample size.
+
 ## File formats
 
 **Parquet for the generated tables.** `src/utils/io.py` is the whole of it, two functions
@@ -226,6 +260,9 @@ scripts/
   calibration/  the parameter-selection experiments behind the table above
   pipeline/     the things you actually run
 ```
+
+`reports/forecast_scorecard.md` and the dashboard's Scorecard page both come from
+`scripts/pipeline/score_forecast.py`, through the presenter in `src/report/scorecard_view.py`.
 
 The split between `src/report/` and `app/` is deliberate. The presenters hold all the
 logic and are unit-tested; the Streamlit pages only read tables and draw them. That is
