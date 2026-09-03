@@ -1,0 +1,38 @@
+# Data: raw downloads and generated tables, all reproducible from the ingest and
+# pipeline scripts. The reference CSVs are the exception: they are hand-maintained,
+# so they are tracked.
+data/*
+!data/reference/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Generated dashboard artifacts (rebuilt by scripts/pipeline/build_model_artifacts.py)
+reports/calibration.png
+reports/walkforward.csv
+reports/feature_importance.csv
+catboost_info/
+
+# Screenshots captured during development; the published ones live in docs/img/
+dash_*.png
+
+# Local tooling
+.claude/
+.firecrawl/
+.playwright-mcp/
+.vscode/
+.idea/
+
+# Working notes kept locally, not part of the published project
+CLAUDE.md
+docs/superpowers/
+world_cup_F1_plan_*.md
+world_cup_F1_build_instructions.md
+world_cup_prediction_framework*.md
+world_cup_feasibility_and_data_analysis.md
+world_cup_2026_teams.md

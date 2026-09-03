@@ -1,0 +1,53 @@
+# Tournament formats for the Monte-Carlo simulator (src/simulation).
+# Seeding tokens: "1X"/"2X" = winner/runner-up of group X; "T1".."Tk" = best
+# third-placed teams in ranked order (1-based). One file drives both the 48-team
+# 2026 forward sim and the 32-team 2022 backtest through the identical engine.
+"2026":
+  group_size: 4
+  n_groups: 12
+  qualifiers_per_group: 2
+  third_place_slots: 8
+  hosts: ["United States", "Canada", "Mexico"]   # canonical names as used in matches/fixtures ("USA" matched nothing -> US never received home_adv)
+  rounds: ["R32", "R16", "QF", "SF", "F"]
+  # OFFICIAL FIFA 2026 R32 bracket (Wikipedia post-draw schedule, matches 73-88),
+  # ordered so the engine's consecutive-winner pairing reproduces the real tree:
+  # R16: 89=W74vW77, 90=W73vW75, 91=W76vW78, 92=W79vW80, 93=W83vW84, 94=W81vW82,
+  #      95=W86vW88, 96=W85vW87; QF: 97=W89vW90, 98=W93vW94, 99=W91vW92,
+  #      100=W95vW96; SF: 101=W97vW98, 102=W99vW100.
+  # APPROXIMATION: third-place teams enter by RANK (T1..T8) into the official
+  # third-place slots in list order; FIFA's real allocation table assigns thirds by
+  # qualified-group combination (each slot's eligible groups noted per match below).
+  seeding:
+    - ["1E", "T1"]   # M74 (3rd of A/B/C/D/F)
+    - ["1I", "T2"]   # M77 (3rd of C/D/F/G/H)
+    - ["2A", "2B"]   # M73
+    - ["1F", "2C"]   # M75
+    - ["2K", "2L"]   # M83
+    - ["1H", "2J"]   # M84
+    - ["1D", "T3"]   # M81 (3rd of B/E/F/I/J)
+    - ["1G", "T4"]   # M82 (3rd of A/E/H/I/J)
+    - ["1C", "2F"]   # M76
+    - ["2E", "2I"]   # M78
+    - ["1A", "T5"]   # M79 (3rd of C/E/F/H/I)
+    - ["1L", "T6"]   # M80 (3rd of E/H/I/J/K)
+    - ["1J", "2H"]   # M86
+    - ["2D", "2G"]   # M88
+    - ["1B", "T7"]   # M85 (3rd of E/F/G/I/J)
+    - ["1K", "T8"]   # M87 (3rd of D/E/I/J/L)
+"2022":
+  group_size: 4
+  n_groups: 8
+  qualifiers_per_group: 2
+  third_place_slots: 0
+  hosts: ["Qatar"]
+  rounds: ["R16", "QF", "SF", "F"]
+  # Published 2022 R16 bracket; consecutive winners meet in the QF (see next_round).
+  seeding:
+    - ["1A", "2B"]
+    - ["1C", "2D"]
+    - ["1E", "2F"]
+    - ["1G", "2H"]
+    - ["1B", "2A"]
+    - ["1D", "2C"]
+    - ["1F", "2E"]
+    - ["1H", "2G"]

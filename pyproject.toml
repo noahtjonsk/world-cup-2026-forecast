@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "world-cup-2026-forecast"
+version = "1.0.0"
+description = "Monte-Carlo forecast of the 2026 FIFA World Cup: Elo, CatBoost and Dixon-Coles over 49K historical matches"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "noahtjonsk" }]
+keywords = ["football", "soccer", "forecasting", "monte-carlo", "dixon-coles", "elo"]
+
+# Enough to load the data, fit the models and run the simulation.
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "pyarrow>=15.0",      # parquet engine behind src/utils/io.py
+    "pyyaml>=6.0",        # config/params.yaml, config/tournaments.yaml
+    "scipy>=1.11",        # the Dixon-Coles maximum-likelihood fit
+]
+
+[project.optional-dependencies]
+# Everything needed to serve the Streamlit dashboard.
+dashboard = [
+    "streamlit>=1.30",
+    "matplotlib>=3.7",    # the calibration plot on the Model page
+    "catboost>=1.2",      # the win/draw/loss classifier
+    "scikit-learn>=1.3",  # calibration curves and walk-forward splits
+]
+# Fetching raw data. soccerdata has no ARM64 wheels, so it is deliberately
+# separate from the core install: everything except the ingest wrappers in
+# src/ingest/{elo,player_stats}.py works without it.
+ingest = [
+    "statsbombpy>=1.11",
+    "requests>=2.31",
+    "lxml>=5.0",          # pandas.read_html in the FBref scraper
+    "soccerdata>=1.8",
+]
+dev = ["pytest>=8.0"]
+
+[project.urls]
+Repository = "https://github.com/noahtjonsk/world-cup-2026-forecast"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

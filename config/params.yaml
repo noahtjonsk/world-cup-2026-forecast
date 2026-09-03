@@ -1,0 +1,69 @@
+recency_months: 24
+sim_runs: 10000
+random_seed: 42
+sources:
+  statsbomb: true
+  results: true
+models:
+  elo_home_advantage: 65.0
+  elo_draw_base: 0.30
+  dixon_coles:
+    max_goals: 10
+    half_life_days: 730
+    default_competition_weight: 0.2   # weight for unmatched competitions (and friendlies)
+    prior_strength: 1.5               # lambda; min held-out RPS for `both` (reports/goal_backtest_confirm.md: 1.5<2.0<1.0)
+    prior_scale: 0.83                 # beta; empirical sd(strength=atk+dfc) from Task-4 smoke
+    squad_coef: 0.25                  # explicit talent-weighting choice, NOT accuracy-validated (signal un-backtestable: player_stats covers 2024-26 only; see reports/squad_xconf_backtest.md). Reduced 0.4 -> 0.25 on 2026-06-10 after quantifying the Elo-equivalent size (0.4 = England +250 Elo-equiv; 0.25 = +156, a moderate tilt; user decision). Uses the corrected league+midfield signal.
+    elo_anchor_weight: 0.7            # blend sim strength toward Elo; fallback default (cross-confed sample too thin for RPS selection, see reports/elo_anchor_backtest.md). 0 = off.
+    competition_weights:              # ordered [substring, weight]; min-weight among matches wins, case-insensitive
+      - ["FIFA World Cup", 1.0]
+      - ["World Cup 20", 1.0]
+      - ["UEFA Euro", 1.0]
+      - ["Copa Am", 1.0]
+      - ["African Cup of Nations", 1.0]
+      - ["AFC Asian Cup", 1.0]
+      - ["UEFA Nations League", 1.0]
+      - ["CONCACAF Nations League", 1.0]
+      - ["Confederations Cup", 1.0]
+      - ["Gold Cup", 1.0]
+      - ["qualification", 0.8]
+      - ["Olympic", 0.5]
+      - ["Arab Cup", 0.5]
+      - ["EAFF", 0.5]
+      - ["WAFF", 0.5]
+      - ["SAFF", 0.5]
+      - ["AFF Championship", 0.5]
+      - ["Gulf Cup", 0.5]
+      - ["Oceania Nations", 0.5]
+      - ["Asian Games", 0.5]
+      - ["CECAFA", 0.3]
+      - ["COSAFA", 0.3]
+      - ["UNCAF", 0.3]
+      - ["CCCF", 0.3]
+      - ["Merdeka", 0.3]
+      - ["Muratti", 0.3]
+      - ["Island Games", 0.3]
+      - ["Nehru", 0.3]
+      - ["Kirin", 0.3]
+      - ["King's Cup", 0.3]
+      - ["Korea Cup", 0.3]
+      - ["Baltic", 0.3]
+      - ["Nordic", 0.3]
+      - ["Balkan", 0.3]
+      - ["Pacific Games", 0.3]
+      - ["South Pacific", 0.3]
+      - ["Southeast Asian", 0.3]
+      - ["Viva World Cup", 0.3]
+      - ["CONIFA", 0.3]
+      - ["FIFA Series", 0.3]
+      - ["Windward", 0.3]
+      - ["Cabral", 0.3]
+      - ["British Home Championship", 0.3]
+      - ["Friendly", 0.2]
+sim_jitter: 0.15   # sd of per-team attack/defence strength perturbation (uncertainty propagation)
+states:
+  live_cutoff_date: "2026-06-11"   # 2026 WC kickoff: Elo-seed boundary + default as-of
+  k_base: 60.0                     # default Elo K (match importance); overridden per competition
+  competition_weights:
+    "World Cup": 60.0
+    "Friendly": 10.0

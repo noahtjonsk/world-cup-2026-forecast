@@ -1,0 +1,15 @@
+# Core: load the data, fit the models, run the simulation, pass the test suite.
+# Mirrors [project.dependencies] in pyproject.toml. Prefer `pip install -e .`,
+# which also puts `src` on the path and retires the PYTHONPATH prefix.
+pandas>=2.0
+numpy>=1.24
+pyarrow>=15.0
+pyyaml>=6.0
+scipy>=1.11
+pytest>=8.0
+
+# Dashboard: pip install -e ".[dashboard]"
+#   streamlit, matplotlib, catboost, scikit-learn
+# Data ingestion: pip install -e ".[ingest]"
+#   statsbombpy, requests, lxml, soccerdata
+# soccerdata has no ARM64 wheels; only src/ingest/{elo,player_stats}.py need it.
