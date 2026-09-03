@@ -4,11 +4,10 @@ Extends player_stats past the top five European leagues, which matters because a
 large share of World Cup squads play elsewhere and would otherwise have no
 statistical coverage at all."""
 import pandas as pd
-import numpy as np
-import sys, os, re, time, json
+import sys, os, time
 sys.path.insert(0, ".")
 from src.ingest.run import persist_tables
-from src.utils.io import read_parquet, write_parquet
+from src.utils.io import read_parquet
 from src.schema import CANON_PLAYER_STAT_COLS
 
 # ---- Leagues to scrape (FBref comp_id, league_name, seasons) ----

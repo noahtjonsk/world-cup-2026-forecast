@@ -27,7 +27,7 @@ for col, (label, value) in zip(cols, view.headline(metrics, skill)):
     col.metric(label, value)
 
 st.subheader("Match predictions vs two predictors that know nothing")
-st.dataframe(view.metrics_table(metrics), use_container_width=True)
+st.dataframe(view.metrics_table(metrics), use_container_width=True, hide_index=True)
 st.caption(view.HOW_TO_READ)
 st.write(
     f"The advantage over the uniform predictor is {skill['mean_advantage']:.3f} in "
@@ -38,17 +38,19 @@ st.write(
 
 st.subheader("Goals and where the forecast leaned")
 left, right = st.columns(2)
-left.dataframe(view.goals_summary(sc.goal_metrics(joined)), use_container_width=True)
+left.dataframe(view.goals_summary(sc.goal_metrics(joined)), use_container_width=True,
+               hide_index=True)
 mix = sc.outcome_mix(joined)
 mix["mean_predicted"] = (mix["mean_predicted"] * 100).round(1)
 mix["observed"] = (mix["observed"] * 100).round(1)
 right.dataframe(mix.rename(columns={"mean_predicted": "mean predicted %",
                                     "observed": "actually happened %"}),
-                use_container_width=True)
+                use_container_width=True, hide_index=True)
 
 st.subheader("Reaching each round")
 reliability = sc.round_reliability(sc.round_reach_comparison(sim, results))
-st.dataframe(view.reliability_table(reliability), use_container_width=True)
+st.dataframe(view.reliability_table(reliability), use_container_width=True,
+             hide_index=True)
 st.caption("Across every team and knockout round: when the model said 25%, did about a "
            "quarter of those happen? This is the part that holds up best.")
 

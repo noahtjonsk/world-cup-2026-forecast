@@ -4,11 +4,10 @@ Reshapes the source CSVs into the long format the rest of the project expects,
 one row per player, metric and season, so new sources can be appended without
 schema changes."""
 import pandas as pd
-import numpy as np
 import sys
 sys.path.insert(0, ".")
-from src.ingest.player_stats import normalize_player_stats
 from src.ingest.run import persist_tables
+from src.schema import CANON_PLAYER_STAT_COLS
 from src.utils.io import read_parquet
 
 # ---- Metric columns to extract from the FBref-style wide CSVs ----
@@ -145,7 +144,10 @@ def main():
     # Drop placeholder rows (single-row test data)
     existing_real = existing[existing["source"] != "fbref"] if "source" in existing.columns else existing.iloc[0:0]
 
-    final = pd.concat([combined, existing_real], ignore_index=True)
+    # Column order comes from the schema, not from whatever concat happened to produce.
+    # src/ingest/player_stats.py already does this; without it here the two producers
+    # write the same table with `value` and `source` transposed.
+    final = pd.concat([combined, existing_real], ignore_index=True)[CANON_PLAYER_STAT_COLS]
 
     print(f"\nTotal player_stats: {len(final):,} rows")
     print(f"  Players: {final['player'].nunique():,}")

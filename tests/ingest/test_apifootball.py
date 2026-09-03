@@ -6,7 +6,6 @@ def test_build_request_uses_verified_base_and_auth_header():
     assert headers["x-apisports-key"] == "KEY"
     assert params == {"league": 1, "season": 2026}
 
-import pandas as pd
 from src.schema import CANON_FIXTURE_COLS
 from src.ingest.apifootball import normalize_fixtures
 

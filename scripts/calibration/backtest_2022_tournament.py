@@ -3,8 +3,6 @@
 Fits the goal model on matches up to that tournament, runs the 32-team bracket,
 and prints the champion odds it would have produced. The point is to confirm the
 engine gives a plausible field on a tournament whose result we already know."""
-import numpy as np
-import pandas as pd
 from src.utils.io import read_parquet
 from src.simulation.format import load_tournament_format
 from src.simulation.backtest import backtest_tournament

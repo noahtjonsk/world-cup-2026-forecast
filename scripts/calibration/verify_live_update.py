@@ -9,7 +9,6 @@ import hashlib
 import time
 from pathlib import Path
 
-import pandas as pd
 
 from src.utils.io import read_parquet
 from src.config import load_params

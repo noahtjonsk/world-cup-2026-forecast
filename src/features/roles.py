@@ -1,6 +1,5 @@
 # src/features/roles.py
 import re
-import pandas as pd
 
 # nominal position code -> role bucket.
 # Granular codes (CB/DM/AM...) come from sources that supply them; the coarse codes

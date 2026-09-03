@@ -1,0 +1,6 @@
+{
+  "data/processed/match_predictions.parquet": "d4c38c0460de2153bb3bb140f1a583b4dc3cd586e6f69c7d72524d04e1f2583d",
+  "data/processed/simulation_results.parquet": "f11a81d0af4567e0504397dcdb7f07f52dd7872c4294e9edc18795b238ae89fd",
+  "data/processed/bracket_results.parquet": "02f1e701782f090a42d4191279ca61967de3d3a3f7e9477a671e560a90481693",
+  "reports/simulation.md": "4adf8fb9d9654cc7593cf0711721f865c7141af66c351b7ea6ca4590d25cbe78"
+}

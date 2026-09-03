@@ -42,7 +42,9 @@ def test_headline_reports_the_published_row_not_a_reference_row():
     h = dict(headline(_metrics(), _skill()))
     assert h["Matches scored"] == "72"
     assert h["Log-loss"] == "0.901"          # the published row, not uniform's 1.099
-    assert "0.070 to 0.321" in h["Advantage over uniform"]
+    # Point estimate only: the full interval overflowed the metric tile, and the
+    # paragraph beneath it carries the interval instead.
+    assert h["Advantage over uniform"] == "0.198"
 
 
 def test_metrics_table_rounds_without_reordering():
@@ -94,3 +96,22 @@ def test_shared_copy_names_the_model_that_was_actually_published():
     assert "Elo baseline" in WHAT_THIS_SCORES
     assert "CatBoost is not scored" in WHAT_THIS_SCORES
     assert "lower-is-better" in HOW_TO_READ
+
+
+def test_champion_sentence_does_not_claim_rank_one_for_a_lower_pick():
+    """The winner is not always the favorite; the sentence must say which it was."""
+    s = champion_sentence({"champion": "Spain", "runner_up": "Argentina",
+                           "predicted_prob": 0.05, "predicted_rank": 7, "n_teams": 48,
+                           "favorite": "Brazil", "favorite_prob": 0.22})
+    assert "number 7 pick of 48" in s
+    assert "favorite" not in s                # it was not the favorite
+    assert "not evidence of skill" in s
+
+
+def test_champion_sentence_handles_a_winner_missing_from_the_odds():
+    s = champion_sentence({"champion": "Spain", "runner_up": "Argentina",
+                           "predicted_prob": float("nan"), "predicted_rank": -1,
+                           "n_teams": 48, "favorite": "Brazil", "favorite_prob": 0.22})
+    assert "nan" not in s.lower()             # never render a NaN percentage
+    assert "does not appear in the title odds" in s
+    assert "Brazil" in s

@@ -9,7 +9,6 @@ so. Its value is that it ranks squads sensibly, not that it is proven to improve
 accuracy. Writes reports/squad_coef_corrected_backtest.md."""
 from pathlib import Path
 import pandas as pd
-import numpy as np
 from src.config import load_params
 from src.features.squad_strength import team_squad_strength, club_league_multiplier
 from src.models.dixon_coles import fit_dixon_coles

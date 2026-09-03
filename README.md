@@ -102,6 +102,11 @@ the most likely matchup at every tie.
 
 ![Bracket page](docs/img/bracket.png)
 
+The Scorecard page marks the forecast against the results, with the reference predictors next
+to it and every match ordered by how badly it was missed.
+
+![Scorecard page](docs/img/scorecard.png)
+
 ## How it works
 
 The forecast is built from four parts that each do one job.
@@ -150,6 +155,11 @@ odds look nice.
 | 2026 fixtures | 72 | the real post-draw schedule, validated |
 | 2026 groups | 48 | the actual draw |
 | Predicted lineups | 2,910 | projected starting elevens for all 48 teams |
+
+These counts describe the snapshot the forecast was built on, as of 11 June 2026. The upstream
+sources keep growing, so rebuilding today yields a few hundred more matches and a few more
+player rows. That is expected. The forecast is not rebuilt, because the whole point of it is
+that it predates the tournament.
 
 Raw datasets are not redistributed. The processed tables are reproducible from the ingestion and
 modeling scripts, and a handful of small reference files (confederations, league strengths, club
@@ -209,7 +219,7 @@ Install it as an editable package, which also puts `src` on the import path:
 
 ```bash
 python -m pip install -e ".[dashboard]"    # core model plus Streamlit, CatBoost, matplotlib
-python -m pytest -q                        # full test suite, 177 tests
+python -m pytest -q                        # full test suite, 236 tests
 python -m streamlit run app/Home.py        # dashboard at http://localhost:8501
 ```
 
@@ -256,7 +266,7 @@ data-correctness rule that came out of the audit above.
 
 The stack is Python throughout: pandas and NumPy for the data, SciPy for the Dixon-Coles
 maximum-likelihood fit, CatBoost for the win/draw/loss classifier, and Streamlit for the
-dashboard. The 177-test suite covers the pure transforms and the presenters. Scripts live
+dashboard. The 236-test suite covers the pure transforms and the presenters. Scripts live
 under `scripts/` in three folders: `ingest/` builds the input tables, `calibration/` holds
 the parameter-selection experiments, and `pipeline/` holds the things you actually run.
 

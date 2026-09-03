@@ -1,5 +1,3 @@
-import pandas as pd
-
 _METRIC_COLS = ["log_loss", "rps", "brier"]
 
 

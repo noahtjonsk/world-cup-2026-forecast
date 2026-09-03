@@ -6,7 +6,6 @@ against statsbombpy, with no SPADL or socceraction dependency."""
 import sys, os
 sys.path.insert(0, ".")
 import pandas as pd
-import numpy as np
 from statsbombpy import sb
 from src.ingest.run import persist_tables
 from src.schema import CANON_PLAYER_STAT_COLS, CANON_TEAM_STYLE_COLS

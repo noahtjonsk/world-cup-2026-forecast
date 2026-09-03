@@ -33,7 +33,7 @@ from src.utils.ids import make_match_id
 def main(do_fetch=True):
     if do_fetch:
         if os.environ.get("APIFOOTBALL_KEY"):
-            from scripts.fetch_live_results import main as fetch_main
+            from scripts.ingest.fetch_live_results import main as fetch_main
             fetch_main(dry_run=False)
         else:
             print("APIFOOTBALL_KEY not set - skipping fetch (using matches.parquet as-is)")

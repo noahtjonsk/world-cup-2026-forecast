@@ -1,4 +1,3 @@
-import pandas as pd
 from src.schema import CANON_PLAYER_STAT_COLS
 
 def normalize_player_stats(raw, source, season, id_cols=("player", "team", "position")):

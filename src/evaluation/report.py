@@ -1,5 +1,4 @@
 # src/evaluation/report.py
-import numpy as np
 import pandas as pd
 from src.evaluation.metrics import log_loss, rps, brier_score, calibration_table
 from src.evaluation.walkforward import time_splits

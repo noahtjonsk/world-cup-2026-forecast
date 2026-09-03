@@ -29,8 +29,7 @@ def headline(metrics, skill):
         ("Matches scored", f"{int(published['n'])}"),
         ("Log-loss", f"{published['log_loss']:.3f}"),
         ("RPS", f"{published['rps']:.3f}"),
-        ("Advantage over uniform",
-         f"{skill['mean_advantage']:.3f} ({skill['ci_low']:.3f} to {skill['ci_high']:.3f})"),
+        ("Advantage over uniform", f"{skill['mean_advantage']:.3f}"),
     ]
 
 
@@ -100,11 +99,22 @@ def champion_sentence(check):
     """
     if not check:
         return "No final result available."
+
+    prob, rank = check["predicted_prob"], check["predicted_rank"]
+    if rank < 1 or prob != prob:                      # absent from the odds, or NaN
+        return (
+            f"{check['champion']} won, beating {check['runner_up']} in the final. "
+            f"The model's favorite was {check['favorite']} at "
+            f"{check['favorite_prob']:.1%}. The winner does not appear in the title odds, "
+            f"so there is no probability to report against them."
+        )
+
+    standing = ("the model's favorite" if rank == 1
+                else f"the model's number {rank} pick of {check['n_teams']}")
     return (
-        f"{check['champion']} won, and was the model's favorite at "
-        f"{check['predicted_prob']:.1%}, ranked 1 of {check['n_teams']}. "
+        f"{check['champion']} won, and was {standing} at {prob:.1%}. "
         f"{check['runner_up']} were runners-up. That is one observation and it is worth "
-        f"very little on its own: an outcome given {check['predicted_prob']:.0%} happens "
-        f"about {check['predicted_prob']:.0%} of the time, so a single correct call is "
-        f"not evidence of skill. The 72 match predictions above are."
+        f"very little on its own: an outcome given {prob:.0%} happens about {prob:.0%} "
+        f"of the time, so a single correct call is not evidence of skill. The 72 match "
+        f"predictions above are."
     )
