@@ -8,6 +8,7 @@ version = "1.0.0"
 description = "Monte-Carlo forecast of the 2026 FIFA World Cup: Elo, CatBoost and Dixon-Coles over 49K historical matches"
 readme = "README.md"
 requires-python = ">=3.10"
+license = { file = "LICENSE" }
 authors = [{ name = "noahtjonsk" }]
 keywords = ["football", "soccer", "forecasting", "monte-carlo", "dixon-coles", "elo"]
 
